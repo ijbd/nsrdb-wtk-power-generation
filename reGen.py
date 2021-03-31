@@ -287,10 +287,7 @@ def main():
 
     # get desired coordinates base on geometry
     coords = getCoordinateList()
-    
-    #Initial print
-    start_time = datetime.datetime.now()
-    print('Program Starting: ')
+  
     print('{nc} coordinates found...'.format(nc=len(coords)))
 
     # check for existing file
@@ -321,7 +318,7 @@ def main():
 
     powerCurve = pd.read_csv('powerCurves.csv')
 
-    for coord in coords[:5]:
+    for coord in coords[:]:
         lat = coord[0]
         lon = coord[1]
 
