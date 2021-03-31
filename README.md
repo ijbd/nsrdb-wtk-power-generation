@@ -2,7 +2,7 @@
 3/31/2021
 
 ## Intro
-The purpose of this program is to (1) extract solar and wind resources using the National Renewable Energy Laboratory's developer API, and then convert those resources into hourly capacity factors using the System Advisor Model. 
+The purpose of this program is to extract solar and wind resource data using the National Renewable Energy Laboratory's developer API, and then convert those resources into hourly capacity factors using the System Advisor Model. 
 
 ## Setup
 1. Get an [NREL API Key](https://developer.nrel.gov/signup/):
@@ -23,7 +23,7 @@ The purpose of this program is to (1) extract solar and wind resources using the
 
 ## CLI
 
-When running from the command line, parameters should be passed as key-val pairs. For example:
+When running from the command line, parameters should be passed as key-value pairs. For example:
 
     python reGen.py --year 2014 --api-key <my-key> --email <my-email> ...
 
