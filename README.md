@@ -15,7 +15,9 @@ The purpose of this program is to extract solar and wind resource data using the
         pip install geopandas
         pip install NREL-PySAM
         pip install shapely
-
+        pip install requests
+        pip install matplotlib
+        
 3. Clone repository:
 
         git clone https://github.com/ijbd/powGen-wtk-nsrdb.git

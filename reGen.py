@@ -287,6 +287,7 @@ def main():
 
     # get desired coordinates base on geometry
     coords = getCoordinateList()
+    dbgPlotCoords(coords)
   
     print('{nc} coordinates found...'.format(nc=len(coords)))
 
@@ -314,11 +315,15 @@ def main():
 
         # only complete remaining coordinates
         coords = [coord for coord in coords if coord not in completeSolarCoords or coord not in completeWindCoords]
+
+        if(len(coords) == 0):
+            return
     #endif
 
-    powerCurve = pd.read_csv('powerCurves.csv')
+    powerCurve = pd.read_csv(os.path.join(local_path,'powerCurves/powerCurves.csv'))
 
-    for coord in coords[:]:
+    for coord in coords:
+
         lat = coord[0]
         lon = coord[1]
 
