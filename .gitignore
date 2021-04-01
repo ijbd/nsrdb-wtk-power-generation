@@ -1,5 +1,5 @@
-solar_cf*
-wind_cf
-*cf*
 __pycache__
 *tmp*
+resourceData/*.srw
+resourceData/*.csv
+output/*.csv

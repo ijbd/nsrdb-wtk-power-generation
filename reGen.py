@@ -46,19 +46,29 @@ parser.add_argument('--deg_resolution', type=float, default=.04, help='Approxima
 args = parser.parse_args()
 
 def getSolarResourceData(year, lat, lon):
-    nsrdb_url = 'https://developer.nrel.gov/api/nsrdb/v2/solar/psm3-download.csv'
+    solar_resource_filename = os.path.join(local_path,'resourceData/{lat}_{lon}_nsrdb.csv'.format(lat=lat,lon=lon))
 
-    params = { 'api_key' : args.api_key,
-               'email' : args.email,
-               'wkt' : 'POINT({lon}+{lat})'.format(lon=lon, lat=lat),
-               'names' : year,
-               'utc' : 'true'
-             }
+    # check if download already complete
+    if os.path.exists(solar_resource_filename):
+        solarResource = pd.read_csv(solar_resource_filename)
+    else:
+        nsrdb_url = 'https://developer.nrel.gov/api/nsrdb/v2/solar/psm3-download.csv'
 
-    params_str = '&'.join(['{key}={value}'.format(key=key,value=params[key]) for key in params])
-    download_url = '{nsrdb_url}?{params_str}'.format(nsrdb_url=nsrdb_url,params_str=params_str)
-    
-    solarResource = pd.read_csv(download_url)
+        params = { 'api_key' : args.api_key,
+                'email' : args.email,
+                'wkt' : 'POINT({lon}+{lat})'.format(lon=lon, lat=lat),
+                'names' : year,
+                'utc' : 'true'
+                }
+
+        params_str = '&'.join(['{key}={value}'.format(key=key,value=params[key]) for key in params])
+        download_url = '{nsrdb_url}?{params_str}'.format(nsrdb_url=nsrdb_url,params_str=params_str)
+        
+        solarResource = pd.read_csv(download_url)
+
+        # Save
+        if args.save_resource:
+            solarResource.to_csv(solar_resource_filename,index=False)
 
     # Process for SAM
     solarResourceDescription = solarResource.head(1)
@@ -69,9 +79,6 @@ def getSolarResourceData(year, lat, lon):
     tz = solarResourceDescription.at[0,'Time Zone']
     elev = solarResourceDescription.at[0,'Elevation']
 
-    # Save
-    if args.save_resource:
-        solarResource.to_csv(os.path.join(local_path,'{lat}_{lon}_nsrdb.csv'.format(lat=nsrdbLat,lon=nsrdbLon)),index=False)
 
     solarResourceVariables = solarResource.iloc[1]
     solarResource.drop([0,1],inplace=True)
@@ -119,32 +126,32 @@ def getSolarCF(solarResourceData):
     return solarCF
 
 def getWindSRW(year, lat, lon): # switch to srw
-    wtk_url = 'https://developer.nrel.gov/api/wind-toolkit/v2/wind/wtk-srw-download'
 
-    params = { 'api_key' : args.api_key,
-               'email' : args.email,
-               'lat' : lat,
-               'lon' : lon,
-               'hubheight' : 100,
-               'year' : year,
-               'utc' : 'true'
-             }
+    windSRW = os.path.join(local_path,'resourceData/{lat}_{lon}_wtk.srw'.format(lat=lat,lon=lon))
 
-    params_str = '&'.join(['{key}={value}'.format(key=key,value=params[key]) for key in params])
-    download_url = '{wtk_url}?{params_str}'.format(wtk_url=wtk_url,params_str=params_str)
-    
-    windResource = pd.read_csv(download_url)
+    if not os.path.exists(windSRW):
+        
+        wtk_url = 'https://developer.nrel.gov/api/wind-toolkit/v2/wind/wtk-srw-download'
 
-    # Process for SAM
-    windResourceDescription = windResource.columns.values.tolist()
+        params = { 'api_key' : args.api_key,
+                'email' : args.email,
+                'lat' : lat,
+                'lon' : lon,
+                'hubheight' : 100,
+                'year' : year,
+                'utc' : 'true'
+                }
 
-    # Get site of acutal lat/lon
-    wtkLat = windResourceDescription[5]
-    wtkLon = windResourceDescription[6]
-    
-    # save srw
-    windSRW = os.path.join(local_path,'{lat}_{lon}_wtk.srw'.format(lat=wtkLat,lon=wtkLon))
-    windResource.to_csv(windSRW,index=False)
+        params_str = '&'.join(['{key}={value}'.format(key=key,value=params[key]) for key in params])
+        download_url = '{wtk_url}?{params_str}'.format(wtk_url=wtk_url,params_str=params_str)
+        
+        windResource = pd.read_csv(download_url)
+
+        # Process for SAM
+        windResourceDescription = windResource.columns.values.tolist()
+        
+        # save srw
+        windResource.to_csv(windSRW,index=False)
 
     # Find wind speed (for iec wind class)
     windSpeed100 = np.median(pd.read_csv(windSRW,skiprows=[0,1,3,4],usecols=['Speed']).values)
@@ -239,7 +246,9 @@ def checkArgs():
         if args.min_lat is None or args.max_lat is None or args.min_lon is None or args.max_lon is None:
             raise RuntimeError('For \'grid\' geometry, please include --min_lat, --max_lat, --min_lon and --max_lon')
     if args.deg_resolution < .04:
-            raise RuntimeError('Please choose a resolution greater than .04 degrees')
+        raise RuntimeError('Please choose a resolution greater than .04 degrees')
+    if not os.path.exists(os.path.join(local_path,'output')):
+        os.mkdir(os.path.join(local_path,'output'))
 
 def dbgPlotCoords(coords):
     fig, ax = plt.subplots()
@@ -260,14 +269,14 @@ def dbgPlotCoords(coords):
 def getFilenames():
     # save
     if args.geometry == 'point':
-        solar_filename = os.path.join(local_path,'solar_cf_{lat}_{lon}_{res}_{year}.csv'.format(lat=args.lat,lon=args.lon,res=args.deg_resolution,year=args.year))
-        wind_filename = os.path.join(local_path,'wind_cf_{lat}_{lon}_{res}_{year}.csv'.format(lat=args.lat,lon=args.lon,res=args.deg_resolution,year=args.year))
+        solar_filename = os.path.join(local_path,'output/solar_cf_{lat}_{lon}_{res}_{year}.csv'.format(lat=args.lat,lon=args.lon,res=args.deg_resolution,year=args.year))
+        wind_filename = os.path.join(local_path,'output/wind_cf_{lat}_{lon}_{res}_{year}.csv'.format(lat=args.lat,lon=args.lon,res=args.deg_resolution,year=args.year))
     elif args.geometry == 'grid':
-        solar_filename = os.path.join(local_path,'solar_cf_{minlat}_{minlon}_{maxlat}_{maxlon}_{res}_{year}.csv'.format(minlat=args.minlat,minlon=args.minlon,maxlat=args.maxlat,maxlon=args.maxlon,res=args.deg_resolution,year=args.year))
-        wind_filename = os.path.join(local_path,'wind_cf_{minlat}_{minlon}_{maxlat}_{maxlon}_{year}.csv'.format(minlat=args.minlat,minlon=args.minlon,maxlat=args.maxlat,maxlon=args.maxlon,res=args.deg_resolution,year=args.year))
+        solar_filename = os.path.join(local_path,'output/solar_cf_{minlat}_{minlon}_{maxlat}_{maxlon}_{res}_{year}.csv'.format(minlat=args.minlat,minlon=args.minlon,maxlat=args.maxlat,maxlon=args.maxlon,res=args.deg_resolution,year=args.year))
+        wind_filename = os.path.join(local_path,'output/wind_cf_{minlat}_{minlon}_{maxlat}_{maxlon}_{year}.csv'.format(minlat=args.minlat,minlon=args.minlon,maxlat=args.maxlat,maxlon=args.maxlon,res=args.deg_resolution,year=args.year))
     else:
-        solar_filename = os.path.join(local_path,'solar_cf_{st}_{res}_{year}.csv'.format(st='_'.join(args.states),res=args.deg_resolution,year=args.year))
-        wind_filename = os.path.join(local_path,'wind_cf_{st}_{res}_{year}.csv'.format(st='_'.join(args.states),res=args.deg_resolution,year=args.year))
+        solar_filename = os.path.join(local_path,'output/solar_cf_{st}_{res}_{year}.csv'.format(st='_'.join(args.states),res=args.deg_resolution,year=args.year))
+        wind_filename = os.path.join(local_path,'output/wind_cf_{st}_{res}_{year}.csv'.format(st='_'.join(args.states),res=args.deg_resolution,year=args.year))
 
     return solar_filename, wind_filename
 
@@ -287,7 +296,7 @@ def main():
 
     # get desired coordinates base on geometry
     coords = getCoordinateList()
-    dbgPlotCoords(coords)
+    #dbgPlotCoords(coords)
   
     print('{nc} coordinates found...'.format(nc=len(coords)))
 
