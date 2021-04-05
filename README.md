@@ -27,7 +27,7 @@ The purpose of this program is to extract solar and wind resource data using the
 
 When running from the command line, parameters should be passed as key-value pairs. For example:
 
-    python reGen.py --year 2014 --api-key <my-key> --email <my-email> ...
+    python powGen-wtk-nsrdb.py --year 2014 --api-key <my-key> --email <my-email> ...
 
 | Key   | Type | Options | Required | Description|
 | ----- | ---- | --------| -------- | ---------- |
@@ -47,7 +47,7 @@ When running from the command line, parameters should be passed as key-value pai
 
 Example:
 
-    python reGen.py --year 2014 --api_key <my-key> --email <my-email> --geometry state --deg_resolution .5 --states NY
+    python powGen-wtk-nsrdb.py --year 2014 --api_key <my-key> --email <my-email> --geometry state --deg_resolution .5 --states NY
 
 ## Sources
 1. [State shapefiles](https://www.weather.gov/gis/USStates)

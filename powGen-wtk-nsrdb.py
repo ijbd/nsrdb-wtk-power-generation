@@ -1,5 +1,5 @@
 '''
-ijbd@umich.edu
+ijbd
 3/25/2021
 
 Download solar and wind resource using the NREL API. 
@@ -326,6 +326,7 @@ def main():
         coords = [coord for coord in coords if coord not in completeSolarCoords or coord not in completeWindCoords]
 
         if(len(coords) == 0):
+            print('Nothing else to do... Exiting')
             return
     #endif
 
