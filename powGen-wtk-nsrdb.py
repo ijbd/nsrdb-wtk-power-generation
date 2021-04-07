@@ -313,7 +313,7 @@ def main():
         windGen = pd.read_csv(wind_filename,index_col=0)
 
         completeSolarCoords = [(float(col.split(' ')[0]), float(col.split(' ')[1])) for col in solarGen.columns[:].values]
-        completeWindCoords = [(float(col.split(' ')[0]), float(col.split(' ')[1])) for col in solarGen.columns[:].values]
+        completeWindCoords = [(float(col.split(' ')[0]), float(col.split(' ')[1])) for col in windGen.columns[:].values]
 
         # print summary
         print('Existing job with similar parameters found...')

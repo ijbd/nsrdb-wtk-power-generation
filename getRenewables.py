@@ -11,7 +11,7 @@ import os
 
 local_path = os.path.dirname(__file__)
 
-def getRenewables(solar_filename, wind_filename):
+def getAnnualCF(solar_filename, wind_filename, cf_only=False):
     '''
     Args
     -------
@@ -33,14 +33,54 @@ def getRenewables(solar_filename, wind_filename):
 
     # fill
     renewableSites = pd.DataFrame()
-    renewableSites['Latitude'] = np.append(solarLats,windLats)
-    renewableSites['Longitude'] = np.append(solarLons,windLons)
+    if not cf_only:
+        renewableSites['Latitude'] = np.append(solarLats,windLats)
+        renewableSites['Longitude'] = np.append(solarLons,windLons)
+
+    # get generation 
+    solarGen = np.average(solar.values.T,axis=1)
+    windGen = np.average(wind.values.T,axis=1)
+
+    # Annual CF
+    renewableSites['Annual CF'] = np.append(solarGen,windGen)
+
+    return renewableSites
+
+def getHourlyCF(solar_filename, wind_filename, cf_only=False):
+    '''
+    Args
+    -------
+        `solar_filename` (str) : Absolute path to the solar capacity factor file.
+        `wind_filename` (wind) : Absolute path to the wind capacity factor file.
+
+    Returns
+    -------
+        `renewableSites` (pd.Series) : Series of lat/lons
+    '''
+    solar = pd.read_csv(solar_filename,index_col=0)
+    wind = pd.read_csv(wind_filename,index_col=0)
+
+    # get locations
+    solarLats = [float(c.split()[0]) for c in solar.columns]
+    solarLons = [float(c.split()[1]) for c in solar.columns]
+    windLats = [float(c.split()[0]) for c in wind.columns]
+    windLons = [float(c.split()[1]) for c in wind.columns]
+
+    # fill
+    renewableSites = pd.DataFrame()
+    if not cf_only:
+        renewableSites['Latitude'] = np.append(solarLats,windLats)
+        renewableSites['Longitude'] = np.append(solarLons,windLons)
 
     # get generation 
     solarGen = solar.values.T
     windGen = wind.values.T
 
-    renewableSites[range(len(solarGen))] = np.append(solarGen,windGen)
+    gen = np.concatenate((solarGen,windGen))
+
+    # Annual CF
+    for i in range(gen.shape[1]):
+        renewableSites['Hour {} CF'.format(i)] = gen[:,i]
 
     return renewableSites
 
@@ -48,8 +88,8 @@ def main():
     solar_filename = 'output/solar_cf_NY_PA_OH_WV_KY_TN_VA_MD_DE_NC_NJ_0.5_2014.csv'
     wind_filename = 'output/wind_cf_NY_PA_OH_WV_KY_TN_VA_MD_DE_NC_NJ_0.5_2014.csv'
 
-    renewableSites = getRenewables(solar_filename, wind_filename)
-    print(renewableSites)
+    renewableSites = getAnnualCF(solar_filename, wind_filename)
+    renewableSites = getHourlyCF(solar_filename, wind_filename, cf_only=True)
 
 if __name__ == '__main__':
     main()
