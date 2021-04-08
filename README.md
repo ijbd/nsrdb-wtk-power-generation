@@ -72,8 +72,6 @@ Example:
 | Hub Height | 100 m |
 | Turbine Diameter | 90 m |
 
-
-
 Each site is categorized into three IEC wind turbine classes based on the median annual wind speed @ 100m for the year downloaded. This reflects more realistically the power output of specific turbines that *would* be built at each site.
 
 | Wind Speed | IEC Turbine Class |
