@@ -49,6 +49,35 @@ Example:
 
     python powGen-wtk-nsrdb.py --year 2014 --api_key <my-key> --email <my-email> --geometry state --deg_resolution .5 --states NY
 
+## PySAM Parameters
+
+
+| Parameter | Value |
+| --------- | ----- |
+| Axis Type | Fixed |
+| Azimuth | South-Facing |
+| Tilt | Latitude Angle |
+| DC:AC | 1.1 |
+| Inverter Efficiency | 96 % |
+| Other System Losses | 14 % |
+**Table 1:** PV Parameters
+
+| Parameters | Value |
+| ---------- | ----- |
+| Hub Height | 100 m |
+| Turbine Diameter | 90 m |
+**Table 2:** Wind Turbine Parameters
+
+Each site is categorized into three IEC wind turbine classes based on the median annual wind speed @ 100m for the year downloaded. This reflects more realistically the power output of specific turbines that *would* be built at each site.
+
+| Wind Speed | IEC Turbine Class |
+| ---------- | ----------------- |
+| v<sub>med</sub> > 9 m/s | IEC Class I |
+| 8 m/s < v<sub>med</sub> < 9 m/s | IEC Class II |
+| v<sub>med</sub> < 8 m/s | IEC Class III
+ 
+
+
 ## Sources
 1. [State shapefiles](https://www.weather.gov/gis/USStates)
 
