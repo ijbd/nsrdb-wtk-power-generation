@@ -29,7 +29,9 @@ When running from the command line, parameters should be passed as key-value pai
 
     python powGen-wtk-nsrdb.py --year 2014 --api-key <my-key> --email <my-email> ...
 
-**Important:** Some sites might fail due to an API issue. This program is set up such that if the same command (same parameters) is run twice, the original capacity factors will not be overwritten, and instead the missing coordinates will be filled. It is strongly suggested that the user confirms all sites have been properly downloaded!
+**Important:** Some sites might fail due to an API issue. This program is set up such that if the same command (same parameters) is run twice, the original capacity factors will not be overwritten, and instead the missing coordinates will be filled. It is strongly suggested that the user confirms all sites have been properly downloaded! 
+
+**Important:** This program maintains UTC across coordinates.
 
 | Key   | Type | Options | Required | Description|
 | ----- | ---- | --------| -------- | ---------- |
