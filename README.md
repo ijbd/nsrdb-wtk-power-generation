@@ -29,6 +29,8 @@ When running from the command line, parameters should be passed as key-value pai
 
     python powGen-wtk-nsrdb.py --year 2014 --api-key <my-key> --email <my-email> ...
 
+**Important:** Some sites might fail due to an API issue. This program is set up such that if the same command (same parameters) is run twice, the original capacity factors will not be overwritten, and instead the missing coordinates will be filled. It is strongly suggested that the user confirms all sites have been properly downloaded!
+
 | Key   | Type | Options | Required | Description|
 | ----- | ---- | --------| -------- | ---------- |
 | `year`  | int  | 2007-2014| Yes     | Inclusive  |
@@ -50,7 +52,7 @@ Example:
     python powGen-wtk-nsrdb.py --year 2014 --api_key <my-key> --email <my-email> --geometry state --deg_resolution .5 --states NY
 
 ## PySAM Parameters
-
+**Table 1:** PV Parameters
 
 | Parameter | Value |
 | --------- | ----- |
@@ -60,13 +62,15 @@ Example:
 | DC:AC | 1.1 |
 | Inverter Efficiency | 96 % |
 | Other System Losses | 14 % |
-**Table 1:** PV Parameters
+
+**Table 2:** Wind Turbine Parameters
 
 | Parameters | Value |
 | ---------- | ----- |
 | Hub Height | 100 m |
 | Turbine Diameter | 90 m |
-**Table 2:** Wind Turbine Parameters
+
+
 
 Each site is categorized into three IEC wind turbine classes based on the median annual wind speed @ 100m for the year downloaded. This reflects more realistically the power output of specific turbines that *would* be built at each site.
 
@@ -79,19 +83,29 @@ Each site is categorized into three IEC wind turbine classes based on the median
 
 
 ## Sources
-1. [State shapefiles](https://www.weather.gov/gis/USStates)
+1. [Solar Radiation Data](https://nsrdb.nrel.gov/) [1]
 
-2. [Solar Radiation Data](https://nsrdb.nrel.gov/)
+2. [Wind Resource Data](https://www.nrel.gov/grid/wind-toolkit.html) [2-5]
 
-3. [Wind Resource Data](https://www.nrel.gov/grid/wind-toolkit.html)
+1. [State shapefiles](https://www.weather.gov/gis/USStates) [6]
 
-4. [Generation Modelling](https://sam.nrel.gov/)
+4. [Generation Modelling](https://sam.nrel.gov/) [7,8]
 
 ## Citations
-**ADD NSRDB**
+[1] Sengupta, M., Y. Xie, A. Lopez, A. Habte, G. Maclaurin, and J. Shelby. 2018. "The National Solar Radiation Data Base (NSRDB)." Renewable and Sustainable Energy Reviews  89 (June): 51-60.
 
-**ADD WTK**
+[2] Draxl, C., B.M. Hodge, A. Clifton, and J. McCaa. 2015. Overview and Meteorological Validation of the Wind Integration National Dataset Toolkit (Technical Report, NREL/TP-5000-61740). Golden, CO: National Renewable Energy Laboratory.
 
-**ADD PYSAM**
+[3] Draxl, C., B.M. Hodge, A. Clifton, and J. McCaa. 2015. "The Wind Integration National Dataset (WIND) Toolkit." Applied Energy 151: 355366.
+
+[4] Lieberman-Cribbin, W., C. Draxl, and A. Clifton. 2014. Guide to Using the WIND Toolkit Validation Code (Technical Report, NREL/TP-5000-62595). Golden, CO: National Renewable Energy Laboratory.
+
+[5] King, J., A. Clifton, and B.M. Hodge. 2014. Validation of Power Output for the WIND Toolkit (Technical Report, NREL/TP-5D00-61714). Golden, CO: National Renewable Energy Laboratory.
+
+[6] National Weather Service. 2016. U.S. States and Territories Shapefile.
+
+[7] System Advisor Model Version 2020.11.29 (SAM 2020.11.29). National Renewable Energy Laboratory. Golden, CO. Accessed December 27, 2020. https://sam.nrel.gov.
+
+[8] PySAM Version 2.2.0. National Renewable Energy Laboratory. Golden, CO. Accessed December 27, 2020. https://github.com/nrel/pysam.
 
 
