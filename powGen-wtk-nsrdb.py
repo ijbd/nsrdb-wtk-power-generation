@@ -357,6 +357,7 @@ def main():
         except HTTPError as err:
             if err.code == 429:
                 print('\t','Too many requests... (exiting)')
+                return
             print('\t','Invalid coordinate')
             time.sleep(2)
             
