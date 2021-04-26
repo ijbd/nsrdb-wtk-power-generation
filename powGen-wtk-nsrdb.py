@@ -339,10 +339,11 @@ def main():
 
     powerCurve = pd.read_csv(os.path.join(local_path,'powerCurves/powerCurves.csv'))
 
-    for coord in coords:
+    
+    for i in range(len(coords)):
 
-        lat = coord[0]
-        lon = coord[1]
+        lat = coords[i][0]
+        lon = coords[i][1]
 
         if args.verbose:
             print('Running ({lat}, {lon})...'.format(lat=lat,lon=lon))
@@ -354,6 +355,11 @@ def main():
             windGen['{lat} {lon}'.format(lat=lat, lon=lon)] = getWindCF(windSRW,iecClass,powerCurve)
         except HTTPError:
             print('\t','Invalid coordinate')
+
+        # save progress
+        if i%100 == 99:
+            solarGen.to_csv(solar_filename)
+            windGen.to_csv(wind_filename)
         
     # save
     solarGen.to_csv(solar_filename)
