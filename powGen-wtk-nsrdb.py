@@ -214,9 +214,16 @@ def getCoordinateList():
         return coordinates
 
     if args.geometry == 'state':
+        states = args.states
+        if 'CONTINENTAL' in args.states:
+            states = ['AL','AZ','AR','CA','CO','CT','DE','DC','FL','GA','ID','IL',
+                           'IN','IA','KS','KY','LA','ME','MD','MA','MI','MN','MS','MO',
+                           'MT','NE','NV','NH','NH','NM','NY','NC','ND','OH','OK','OR',
+                           'PA','RI','SC','SD','TN','TX','UT','VT','VA','WA','WV','WI',
+                           'WY']
         # get outer bounds
         usShp = gpd.read_file(os.path.join(local_path,'states/s_11au16.shp'))
-        statesShp = usShp[usShp['STATE'].isin(args.states)]
+        statesShp = usShp[usShp['STATE'].isin(states)]
         bounds = statesShp.total_bounds
 
         coordinates = []
