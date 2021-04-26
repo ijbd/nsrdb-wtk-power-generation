@@ -22,6 +22,7 @@ import geopandas as gpd
 from shapely.geometry import Point
 import matplotlib.pyplot as plt
 import datetime
+import time
 
 # relative location 
 local_path = os.path.dirname(__file__)
@@ -355,6 +356,8 @@ def main():
             windGen['{lat} {lon}'.format(lat=lat, lon=lon)] = getWindCF(windSRW,iecClass,powerCurve)
         except HTTPError:
             print('\t','Invalid coordinate')
+            time.sleep(1)
+            
 
         # save progress
         if i%100 == 99:
