@@ -357,6 +357,8 @@ def main():
         except HTTPError as err:
             if err.code == 429:
                 print('\t','Too many requests... (exiting)')
+                solarGen.to_csv(solar_filename)
+                windGen.to_csv(wind_filename)
                 return
             print('\t','Invalid coordinate')
             time.sleep(2)
