@@ -355,12 +355,12 @@ def main():
             windSRW, iecClass = getWindSRW(year,lat,lon)
             windGen['{lat} {lon}'.format(lat=lat, lon=lon)] = getWindCF(windSRW,iecClass,powerCurve)
         except HTTPError as err:
+            print('\t','Invalid coordinate, error code:',err.code)
             if err.code == 429:
-                print('\t','Too many requests... (exiting)')
                 solarGen.to_csv(solar_filename)
                 windGen.to_csv(wind_filename)
+                print('\t','Too many requests... (exiting)')
                 return
-            print('\t','Invalid coordinate')
             time.sleep(2)
             
 
