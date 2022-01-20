@@ -3,3 +3,4 @@ __pycache__
 resourceData/*.srw
 resourceData/*.csv
 output/*.csv
+debug/

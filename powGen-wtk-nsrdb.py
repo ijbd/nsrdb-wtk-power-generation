@@ -174,22 +174,20 @@ def getWindCF(windSRW, iecClass, powerCurve):
     speed = powerCurve["Wind Speed"]
         
     ##### Parameters #######
-    d.Resource.wind_resource_filename = windSRW
-    d.Resource.wind_resource_model_choice = 0
-    d.Turbine.wind_turbine_powercurve_powerout = powerout
-    d.Turbine.wind_turbine_powercurve_windspeeds = speed
-    d.Turbine.wind_turbine_rotor_diameter = 90
-    d.Turbine.wind_turbine_hub_ht = 100
     nameplate_capacity = 1500 #kw
-    d.Farm.system_capacity = nameplate_capacity # System Capacity (kW)
-    d.Farm.wind_farm_wake_model = 0
-    d.Farm.wind_farm_xCoordinates = np.array([0]) # Lone turbine (centered at position 0,0 in farm)
-    d.Farm.wind_farm_yCoordinates = np.array([0])
+    d.Resource.wind_resource_model_choice = 0
+    d.Resource.wind_resource_filename = windSRW
+    d.Turbine.wind_turbine_powercurve_powerout = powerout*float(nameplate_capacity)/1500
+    d.Turbine.wind_turbine_powercurve_windspeeds = speed
+    d.Turbine.wind_turbine_hub_ht = 100
+    d.Farm.wind_farm_xCoordinates = [0] # Lone turbine (centered at position 0,0 in farm)
+    d.Farm.wind_farm_yCoordinates = [0]
+  
     ########################
     
     d.execute()
     windCF = np.array(d.Outputs.gen) / nameplate_capacity #convert AC generation (kw) to capacity factor
-    
+
     if args.verbose:
         print('\t','Average Wind CF = {cf}'.format(cf=round(np.average(windCF),2)))
 
@@ -221,7 +219,7 @@ def getCoordinateList():
                            'IN','IA','KS','KY','LA','ME','MD','MA','MI','MN','MS','MO',
                            'MT','NE','NV','NH','NH','NM','NY','NC','ND','OH','OK','OR',
                            'PA','RI','SC','SD','TN','TX','UT','VT','VA','WA','WV','WI',
-                           'WY']
+                           'WY']    
         # get outer bounds
         usShp = gpd.read_file(os.path.join(local_path,'states/s_11au16.shp'))
         statesShp = usShp[usShp['STATE'].isin(states)]
@@ -383,7 +381,6 @@ def main():
         print("Program end time...\t",end_time)
         print("Program run time... \t",end_time - start_time)  
         print("Avg. coord run time...\t", (end_time-start_time)/len(coords))
-
 
 if __name__ == '__main__':
     main()
